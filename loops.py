@@ -1,60 +1,91 @@
+cipher_length=input("code:")
+cipher_length=int(cipher_length)
 first=input("'sup:")
 seconds=list(first)
+alphabet=["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+a=0
+b=1
+c=2
+d=3
+e=4
+f=5
+g=6
+h=7
+i=8
+j=9
+k=10
+l=11
+m=12
+n=13
+o=14
+p=15
+q=16
+r=17
+s=18
+t=19
+u=20
+v=21
+w=22
+x=23
+y=24
+z=25
 for index, second in enumerate(seconds):
 	match second:
 		# Match strings that start with "green_" using a guard clause
-		case str() as s if s.startswith("a"):
-			seconds[index]="z"
-		case str() as s if s.startswith("b"):
-			seconds[index]="a"
-		case str() as s if s.startswith("c"):
-			seconds[index]="b"
-		case str() as s if s.startswith("d"):
-			seconds[index]="c"
-		case str() as s if s.startswith("e"):
-			seconds[index]="d"
-		case str() as s if s.startswith("f"):
-			seconds[index]="e"
-		case str() as s if s.startswith("g"):
-			seconds[index]="f"
-		case str() as s if s.startswith("h"):
-			seconds[index]="g"
-		case str() as s if s.startswith("i"):
-			seconds[index]="h"
-		case str() as s if s.startswith("j"):
-			seconds[index]="i"
-		case str() as s if s.startswith("k"):
-			seconds[index]="j"
-		case str() as s if s.startswith("l"):
-			seconds[index]="k"
-		case str() as s if s.startswith("m"):
-			seconds[index]="l"
-		case str() as s if s.startswith("n"):
-			seconds[index]="m"
-		case str() as s if s.startswith("o"):
-			seconds[index]="n"
-		case str() as s if s.startswith("p"):
-			seconds[index]="o"
-		case str() as s if s.startswith("q"):
-			seconds[index]="p"
-		case str() as s if s.startswith("r"):
-			seconds[index]="q"
-		case str() as s if s.startswith("s"):
-			seconds[index]="r"
-		case str() as s if s.startswith("t"):
-			seconds[index]="s"
-		case str() as s if s.startswith("u"):
-			seconds[index]="t"
-		case str() as s if s.startswith("v"):
-			seconds[index]="u"
-		case str() as s if s.startswith("w"):
-			seconds[index]="v"
-		case str() as s if s.startswith("x"):
-			seconds[index]="w"
-		case str() as s if s.startswith("y"):
-			seconds[index]="x"
-		case str() as s if s.startswith("z"):
-			seconds[index]="y"
+		case("a"):
+			seconds[index]=alphabet[a-cipher_length]
+		case("b"):
+			seconds[index]=alphabet[b-cipher_length]
+		case("c"):
+			seconds[index]=alphabet[c-cipher_length]
+		case("d"):
+			seconds[index]=alphabet[d-cipher_length]
+		case("e"):
+			seconds[index]=alphabet[e-cipher_length]
+		case("f"):
+			seconds[index]=alphabet[f-cipher_length]
+		case("g"):
+			seconds[index]=alphabet[g-cipher_length]
+		case("h"):
+			seconds[index]=alphabet[h-cipher_length]
+		case("i"):
+			seconds[index]=alphabet[i-cipher_length]
+		case("j"):
+			seconds[index]=alphabet[j-cipher_length]
+		case("k"):
+			seconds[index]=alphabet[k-cipher_length]
+		case("l"):
+			seconds[index]=alphabet[l-cipher_length]
+		case("m"):
+			seconds[index]=alphabet[m-cipher_length]
+		case("n"):
+			seconds[index]=alphabet[n-cipher_length]
+		case("o"):
+			seconds[index]=alphabet[o-cipher_length]
+		case("p"):
+			seconds[index]=alphabet[p-cipher_length]
+		case("q"):
+			seconds[index]=alphabet[q-cipher_length]
+		case("r"):
+			seconds[index]=alphabet[r-cipher_length]
+		case("s"):
+			seconds[index]=alphabet[s-cipher_length]
+		case("t"):
+			seconds[index]=alphabet[t-cipher_length]
+		case("u"):
+			seconds[index]=alphabet[u-cipher_length]
+		case("v"):
+			seconds[index]=alphabet[v-cipher_length]
+		case("w"):
+			seconds[index]=alphabet[w-cipher_length]
+		case("x"):
+			seconds[index]=alphabet[x-cipher_length]
+		case("y"):
+			seconds[index]=alphabet[y-ipher_length]
+		case("z"):
+			seconds[index]=alphabet[z-ipher_length]
+		case(" "):
+			seconds[index]=(" ")
 		case _: 
 			print("error")
 message = "".join(seconds)
