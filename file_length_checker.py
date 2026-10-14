@@ -1,0 +1,6 @@
+filename=input("please enter a file name:")
+file=open(filename)
+file=file.read()
+file=file.split()
+file_length=len(file)
+print(f"{filename} has {file_length} words")
