@@ -1,7 +1,6 @@
 import random
 
-#fixed entering anything except a number crashing it. Added starter characters. Added enemy names. Added enemies buffing. Added a relic (crutches).
-
+#Made buffing happen less often. Fixed enemy damage being too high, and buffing being too much.
 maximum_health=100
 base_block=5
 base_damage=8
@@ -9,7 +8,7 @@ base_heal=3
 healing_multiplier=1
 damage_multiplier=1
 block_multiplier=1
-enemy_number=1
+enemy_number=0
 block=0
 enemy_random_damage=0
 enemy_random_healing=0
@@ -56,9 +55,9 @@ while enemy_number<10:
 	relics=list(upgrade_options.keys())
 	options=dict(random.sample(list(upgrade_options.items()), 3))
 	relic_options=list(options.keys())
-	""
+	
 	while multiplier!="1" and multiplier!="2" and multiplier!="3":
-		multiplier=(input(f"You beat enemy number {enemy_number-1}, which of these three upgrades would you like? {options}"))
+		multiplier=(input(f"You beat enemy number {enemy_number}, which of these three upgrades would you like? {options}"))
 	multiplier=int(multiplier)
 	match relic_options[multiplier-1]:
 		case "wall o' steel":
@@ -91,30 +90,34 @@ while enemy_number<10:
 			spiked_shield=1
 		case "crutches":
 			crutches=1
-	multiplier=0
 	
-	enemy_health=25*(enemy_number)
 	enemy_number+=1
+	enemy_health=25*(enemy_number)
 	relic_bar.append(upgrade_options.pop(relic_options[multiplier-1]))
 	current_enemy=random.choice(enemy_pool)
 	enemy_pool.remove(current_enemy)
 	
+	multiplier=0
+	
 	print(f"A challenger approaches! It's {current_enemy}!")
 	print(f"your health is: {player_health}")
-	print(f"{current_enemy}'s health is: {enemy_health}")
+	print(f"{current_enemy}'s health is: {enemy_health}\n")
 	
 	while player_health>0 and enemy_health>0:
 		if turn_count%2==0:
+			buffing_weight=50*(enemy_number/10)
+			zero_three_list=[0, 1, 2, 3]
+			attacking_weights=[(100-buffing_weight)/3, (100-buffing_weight)/3, (100-buffing_weight)/3, buffing_weight]
 			if enemy_buffed_last_turn==0:
-				enemy_doing=[random.randint(0, 3), random.randint(0, 3)]
+				enemy_doing=[random.choices(zero_three_list, weights=attacking_weights, k=1)[0], random.choices(zero_three_list, weights=attacking_weights, k=1)[0]]
 			else:
-				enemy_doing=[1, random.randint(0, 3)]
+				enemy_doing=[1, random.randint(0, 2)]
 				enemy_buffed_last_turn=0
 			match enemy_doing[0]:
 				case 0:
 					enemy_random_healing=random.randint(1+enemy_number, 3+enemy_number)
 				case 1:
-					enemy_random_damage=random.randint(1+enemy_number, 5+enemy_number)+enemy_strength
+					enemy_random_damage=random.randint(1+enemy_number, 5+enemy_number)
 				case 2:
 					enemy_random_block=random.randint(1+enemy_number, 4+enemy_number)
 				case 3:
@@ -125,14 +128,15 @@ while enemy_number<10:
 				case 0:
 					enemy_random_healing+=random.randint(1+enemy_number, 3+enemy_number)
 				case 1:
-					enemy_random_damage+=random.randint(1+enemy_number, 5+enemy_number)+enemy_strength
+					enemy_random_damage+=random.randint(1+enemy_number, 5+enemy_number)
 				case 2:
 					enemy_random_block+=random.randint(1+enemy_number, 4+enemy_number)
 				case 3:
 					enemy_buffing+=1
 					enemy_buffed_last_turn=1
-
-			enemy_strength+=enemy_buffing*(1+int(enemy_number/3))
+			if enemy_random_damage>0:
+				enemy_random_damage+=enemy_strength
+			enemy_strength+=enemy_buffing*(1+int(enemy_number/4))
 
 			if battering_ram==1:
 				enemy_random_block-=5
@@ -151,6 +155,7 @@ while enemy_number<10:
 				block_option=int(attack_option/2)
 			move_options=[f"block {block_option}", f"attack {attack_option}", f"heal {heal_option}"]
 
+			print(f" enemy strength is: {enemy_strength}, random_damage is {enemy_random_damage}, enemy_buffing is {enemy_buffing} enemy_number is {enemy_number}")
 			print(f"{current_enemy} is attacking for {enemy_random_damage} damage, blocking for {enemy_random_block}, healing for {enemy_random_healing} and buffing {enemy_buffing} times")
 			enemy_buffing=0
 			print(move_options)
@@ -203,7 +208,7 @@ while enemy_number<10:
 			enemy_random_healing=0
 			
 			print(f"your health is: {player_health}")
-			print(f"{current_enemy}'s health is: {enemy_health}")
+			print(f"{current_enemy}'s health is: {enemy_health}\n")
 		turn_count+=1
 	
 	if player_health>0:
