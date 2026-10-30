@@ -1,6 +1,6 @@
 import random
 
-#Made buffing happen less often. Fixed enemy damage being too high, and buffing being too much.
+#potions work now, but need a lot of work
 maximum_health=100
 base_block=5
 base_damage=8
@@ -32,9 +32,12 @@ multiplier=0
 option_chosen=0
 starting_character=0
 upgrade_options={"wall o' steel": "block x1.5", "vial of testosterone": "damage x1.5", "salt": "healing x1.5", "apple": "healing+1", "wooden shield": "block+2", "brick": "damage+3", "fruit plate": "maximum health+25", "exercise regimen": "-3 damage, +1 damage per turn", "penner nib": "every 10th attack does x3 damage", "weighted blanket": "end of fight healing +10", "battering ram": "decrease enemies block each turn by 5", "a good defense is a good offense": "block=1/2attack. overides all other block", "spiked shield": "whenever you full block, enemy loses 5hp", "crutches": "+5 damage while below 20% max hp"}
+consumables={"bottle o' acid": "deal 20 damage", "inflatable shield": "gain 15 block"}
+inventory=[]
 
-while starting_character!="1" and starting_character!="2":
-	starting_character=input("choose a starting charecter. 1: Timothee. Timothee takes 1 less damage. 2: Angry worm. The angry worm does 2 extra damage, but blocks 1 less. 3: dr. doctor. You start with 25 more max hp")
+while starting_character!="1" and starting_character!="2" and starting_character!="3":
+	starting_character=input("choose a starting charecter. 1: Timothee. Timothee takes 1 less damage. 2: Angry worm. The angry worm does 2 extra damage, but blocks 1 less. 3: dr. doctor. You start with 25 more max hp:")
+print(f"\n")
 match starting_character:
 	case "1":
 		relic_bar=["Timothee"]
@@ -49,6 +52,14 @@ player_health=maximum_health
 
 while enemy_number<10:
 	
+	consumable_keys=list(consumables.keys())
+	inventory.append(random.choices(list(consumable_keys)))
+	print(inventory)
+	match inventory[0]:
+		case ["bottle o' acid"]:
+			print("success")
+		case ["inflatable shield"]:
+			print("success")
 	enemy_strength=0
 	turn_count=0
 	exercising_gains=0
@@ -159,9 +170,18 @@ while enemy_number<10:
 			print(f"{current_enemy} is attacking for {enemy_random_damage} damage, blocking for {enemy_random_block}, healing for {enemy_random_healing} and buffing {enemy_buffing} times")
 			enemy_buffing=0
 			print(move_options)
-			while option_chosen!="1" and option_chosen!="2" and option_chosen!="3":
-				option_chosen=(input("choose one, two, or three:"))
-			option_chosen=int(option_chosen)
+			while option_chosen!=1 and option_chosen!=2 and option_chosen!=3:
+				option_chosen=int(input("choose one, two, or three. press four to use a consumable:"))
+				if option_chosen==4:
+					chosen_consumable=int(input(f"which consumable do you want to use? your options are {inventory}"))
+					match inventory[chosen_consumable-1]:
+						case ["bottle o' acid"]:
+							enemy_health-=20
+							inventory.remove(["bottle o' acid"])
+						case ["inflatable shield"]:
+							block+=15
+							inventory.remove(["inflatable shield"])
+
 			if option_chosen==1:
 				block=block_option
 			elif option_chosen==2:
