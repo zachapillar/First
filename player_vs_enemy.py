@@ -1,5 +1,6 @@
 import random
 
+
 #potions work now, but need a lot of work
 maximum_health=100
 base_block=5
@@ -13,6 +14,7 @@ block=0
 enemy_random_damage=0
 enemy_random_healing=0
 enemy_random_block=0
+inventions=1
 enemy_pool=["angry worms angrier brother", "the mouse of despair", "friendly looking dog", "annoyed librarian", "strangely tall giraffe", "ferocious kitten", "cunning wizard", "cute little fire breathing dragon", "extremely snappy turtle", "fire elemental", "wierdly green sloth", "sleepy polar bear"]
 
 exercising=0
@@ -26,17 +28,19 @@ spiked_shield=0
 enemy_buffing=0
 enemy_buffed_last_turn=0
 crutches=0
+marbles_deployed=0
+currently_flaming=0
 
 turn_count=0
 multiplier=0
 option_chosen=0
 starting_character=0
 upgrade_options={"wall o' steel": "block x1.5", "vial of testosterone": "damage x1.5", "salt": "healing x1.5", "apple": "healing+1", "wooden shield": "block+2", "brick": "damage+3", "fruit plate": "maximum health+25", "exercise regimen": "-3 damage, +1 damage per turn", "penner nib": "every 10th attack does x3 damage", "weighted blanket": "end of fight healing +10", "battering ram": "decrease enemies block each turn by 5", "a good defense is a good offense": "block=1/2attack. overides all other block", "spiked shield": "whenever you full block, enemy loses 5hp", "crutches": "+5 damage while below 20% max hp"}
-consumables={"bottle o' acid": "deal 20 damage", "inflatable shield": "gain 15 block"}
+consumables={"bottle o' acid": "deal 20 damage", "inflatable shield": "gain 15 block", "flamin' hot cheetos": "deal x3 damage this turn", "elixir of dubious coloring": "gain 4 strength and lose four block this combat", "bag of marbles": "enemy will deal 2/3 damage for three turns"}
 inventory=[]
 
-while starting_character!="1" and starting_character!="2" and starting_character!="3":
-	starting_character=input("choose a starting charecter. 1: Timothee. Timothee takes 1 less damage. 2: Angry worm. The angry worm does 2 extra damage, but blocks 1 less. 3: dr. doctor. You start with 25 more max hp:")
+while starting_character!="1" and starting_character!="2" and starting_character!="3" and starting_character!="4":
+	starting_character=input("choose a starting charecter. 1: Timothee. Timothee takes 1 less damage. 2: Angry worm. The angry worm does 2 extra damage, but blocks 1 less. 3: dr. doctor. You start with 25 more max hp. 4: Crazed inventor. You get twice as many consumables:")
 print(f"\n")
 match starting_character:
 	case "1":
@@ -48,18 +52,22 @@ match starting_character:
 	case "3":
 		relic_bar=["dr doctor"]
 		maximum_health+=25
+	case "4":
+		relic_bar=["crazed inventor"]
+
 player_health=maximum_health
 
 while enemy_number<10:
 	
 	consumable_keys=list(consumables.keys())
-	inventory.append(random.choices(list(consumable_keys)))
-	print(inventory)
-	match inventory[0]:
-		case ["bottle o' acid"]:
-			print("success")
-		case ["inflatable shield"]:
-			print("success")
+
+	inventory.extend(random.choices(consumable_keys))
+	print(f"while wandering about, you found {inventory[-1]}")
+	if relic_bar[0]=="crazed inventor":
+		inventory.extend(random.choices(consumable_keys))
+		print(f"while wandering about, your crazed brain realizes you have the perfect ingredients to make a {inventory[-1]}")
+
+
 	enemy_strength=0
 	turn_count=0
 	exercising_gains=0
@@ -122,7 +130,7 @@ while enemy_number<10:
 			if enemy_buffed_last_turn==0:
 				enemy_doing=[random.choices(zero_three_list, weights=attacking_weights, k=1)[0], random.choices(zero_three_list, weights=attacking_weights, k=1)[0]]
 			else:
-				enemy_doing=[1, random.randint(0, 2)]
+				enemy_doing=[1, random.randint(0, 3)]
 				enemy_buffed_last_turn=0
 			match enemy_doing[0]:
 				case 0:
@@ -147,41 +155,75 @@ while enemy_number<10:
 					enemy_buffed_last_turn=1
 			if enemy_random_damage>0:
 				enemy_random_damage+=enemy_strength
-			enemy_strength+=enemy_buffing*(1+int(enemy_number/4))
+			enemy_strength+=enemy_buffing*(1+int(enemy_number/3))
 
 			if battering_ram==1:
 				enemy_random_block-=5
 				if enemy_random_block<0:
 					enemy_random_block=0
-
-			if exercising==1:
-				exercising_gains=turn_count/2
-			if crutches==1 and player_health<(maximum_health/5):
-				attack_option=int((base_damage+exercising_gains+5)*damage_multiplier*penner_multiplier)
-			else:
-				attack_option=int((base_damage+exercising_gains)*damage_multiplier*penner_multiplier)
-			block_option=int(base_block*block_multiplier)
-			heal_option=int(base_heal*healing_multiplier)
-			if defense_offense==1:
-				block_option=int(attack_option/2)
-			move_options=[f"block {block_option}", f"attack {attack_option}", f"heal {heal_option}"]
-
-			print(f" enemy strength is: {enemy_strength}, random_damage is {enemy_random_damage}, enemy_buffing is {enemy_buffing} enemy_number is {enemy_number}")
+					
+			#print(f" enemy strength is: {enemy_strength}, random_damage is {enemy_random_damage}, enemy_buffing is {enemy_buffing} enemy_number is {enemy_number}")
 			print(f"{current_enemy} is attacking for {enemy_random_damage} damage, blocking for {enemy_random_block}, healing for {enemy_random_healing} and buffing {enemy_buffing} times")
-			enemy_buffing=0
-			print(move_options)
+			
 			while option_chosen!=1 and option_chosen!=2 and option_chosen!=3:
-				option_chosen=int(input("choose one, two, or three. press four to use a consumable:"))
+				if exercising==1:
+					exercising_gains=turn_count/2
+					if exercising_gains>13:
+						exercising_gains=13
+				if crutches==1 and player_health<(maximum_health/5):
+					attack_option=int((base_damage+exercising_gains+5)*damage_multiplier*penner_multiplier*(3**currently_flaming))
+				else:
+					attack_option=int((base_damage+exercising_gains)*damage_multiplier*penner_multiplier*(3**currently_flaming))
+				block_option=int(base_block*block_multiplier)
+				heal_option=int(base_heal*healing_multiplier)
+				if defense_offense==1:
+					block_option=int(attack_option/2)
+
+
+				move_options=[f"block {block_option}", f"attack {attack_option}", f"heal {heal_option}"]
+				print(move_options)
+				option_chosen=int(input("choose one, two, or three. press four to use a consumable, and five for consumables you have and all consumable information:"))
 				if option_chosen==4:
 					chosen_consumable=int(input(f"which consumable do you want to use? your options are {inventory}"))
-					match inventory[chosen_consumable-1]:
-						case ["bottle o' acid"]:
-							enemy_health-=20
-							inventory.remove(["bottle o' acid"])
-						case ["inflatable shield"]:
-							block+=15
-							inventory.remove(["inflatable shield"])
+					try:
+						match inventory[chosen_consumable-1]:
+							case "bottle o' acid":
+								enemy_health-=20
+								print(f"you throw a bottle o' acid at {current_enemy}. {current_enemy} hisses in pain and dissolution")
+							case "inflatable shield":
+								block+=15
+								print(f"you pull out an inflatable shield from your inventory, and luckily {current_enemy} gives you five minutes to inflate it. you gained 15 block this turn")
+							case "flamin' hot cheetos":
+								currently_flaming+=1
+								print(f"you eat the flaming hot cheetos, your mouth is on fire. for this turn only you can take it out on {current_enemy}")
+							case "elixir of dubious coloring":
+								base_damage+=4
+								base_block-=4
+								if base_block<0:
+									base_block=0
+								print(f"you drink this mysterious elixir. it makes you feel enraged. you gained four damage, but lost four block")
+							case "bag of marbles":
+								if marbles_deployed>0:
+									marbles_deployed=2
+									enemy_random_damage=int(enemy_random_damage*2/3)
+								else:
+									marbles_deployed+=3
+								print(f"you throw your marbles on the ground! {current_enemy} will sturggle to reach you for 3 turns. {current_enemy} is now attacking for {enemy_random_damage}")
 
+						inventory.remove(inventory[chosen_consumable-1])	
+					except:
+						print("that's not an option silly")
+				if option_chosen==5:
+					print(f"\n")
+					for k,v in consumables.items():
+						print(f"{k} makes you {v}\n")
+					print(f"your inventory is {inventory}\n")
+
+			if marbles_deployed>0:
+				enemy_random_damage=int(enemy_random_damage*2/3)
+				marbles_deployed-=1
+			currently_flaming=0
+			enemy_buffing=0
 			if option_chosen==1:
 				block=block_option
 			elif option_chosen==2:
